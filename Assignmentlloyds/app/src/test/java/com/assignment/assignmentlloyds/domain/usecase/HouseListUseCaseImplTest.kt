@@ -3,9 +3,8 @@ package com.assignment.assignmentlloyds.domain.usecase
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.assignment.assignmentlloyds.domain.model.BaseModelInfo
 import com.assignment.assignmentlloyds.domain.model.HouseListInfo
-import com.assignment.assignmentlloyds.domain.repository.IHouseListRepository
+import com.assignment.assignmentlloyds.domain.repository.IRepository
 import io.mockk.mockk
-import io.mockk.spyk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -24,7 +23,7 @@ class HouseListUseCaseImplTest {
     val testInstantTaskExecutorRule: TestRule = InstantTaskExecutorRule()
 
 
-    private var repository: IHouseListRepository = mockk()
+    private var repository: IRepository = mockk()
 
     private lateinit var useCase: HouseListUseCaseImpl
     @Before
@@ -39,8 +38,8 @@ class HouseListUseCaseImplTest {
         val flow = flow {
             emit(BaseModelInfo.OnSuccess(emptyList<HouseListInfo>()))
         }
-        Mockito.`when`(repository.invoke()).thenReturn(flow)
-        val response = useCase.invoke().first()
+        Mockito.`when`(repository.getHouseList()).thenReturn(flow)
+        val response = useCase().first()
         Assert.assertTrue(response is BaseModelInfo.OnSuccess<*>)
     }
 
@@ -50,8 +49,8 @@ class HouseListUseCaseImplTest {
         val flow = flow {
             emit(BaseModelInfo.OnFailure(Throwable("Error")))
         }
-        Mockito.`when`(repository.invoke()).thenReturn(flow)
-        val response = useCase.invoke().first()
+        Mockito.`when`(repository.getHouseList()).thenReturn(flow)
+        val response = useCase().first()
         Assert.assertTrue(response is BaseModelInfo.OnFailure)
     }
 

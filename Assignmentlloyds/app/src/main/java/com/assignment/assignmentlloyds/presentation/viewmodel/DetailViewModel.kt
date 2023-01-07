@@ -22,7 +22,7 @@ class DetailViewModel @Inject constructor(
         MutableStateFlow(ViewState.Loading(true))
     }
 
-    fun getDetail(): StateFlow<ViewState<DetailInfo>> = _detailFlow
+    val getDetail: StateFlow<ViewState<DetailInfo>> = _detailFlow
 
 
     fun fetchHouseDetail(slug:String) {

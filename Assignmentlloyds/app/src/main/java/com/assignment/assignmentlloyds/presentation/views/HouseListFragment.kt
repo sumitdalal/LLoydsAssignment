@@ -25,7 +25,7 @@ class HouseListFragment : Fragment() {
 
     private var _binding: FragmentHouselistBinding? = null
     private val houseListViewModel:HouseListViewModel by viewModels()
-    private var houseListAdapter:HouseListAdapter?=null;
+    private lateinit var houseListAdapter:HouseListAdapter;
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -43,6 +43,8 @@ class HouseListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViews()
+        registerFlow()
+        fetchHouseNames()
     }
 
     private fun initViews() {
@@ -51,8 +53,7 @@ class HouseListFragment : Fragment() {
             houseListAdapter =  HouseListAdapter(::onClickItem)
             adapter =houseListAdapter
         }
-        registerFlow()
-        fetchHouseNames()
+
     }
 
     private fun fetchHouseNames() {
@@ -69,7 +70,7 @@ class HouseListFragment : Fragment() {
 
     private fun registerFlow() {
         lifecycleScope.launch {
-            houseListViewModel.getHouses().collect { viewState ->
+            houseListViewModel.getHouses.collect { viewState ->
                 when (viewState) {
                     is ViewState.Failure -> handleErrorState(viewState.throwable)
                     is ViewState.Loading -> handleLoadingState()

@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
@@ -71,7 +71,7 @@ class DetailViewModelTest {
 
     @Test
     fun `get Detail of house from API with Success Case`() {
-        runBlockingTest {
+        runTest {
             coEvery { useCase("slug") } returns fakeSuccessFlow
             launch {
                 detailViewModel.getDetail().collect(flowCollector)
@@ -79,7 +79,7 @@ class DetailViewModelTest {
             detailViewModel.fetchHouseDetail("slug")
 
             verifyOrder {
-                runBlockingTest {
+                runTest {
                     flowCollector.emit(ViewState.Loading(true))
                     flowCollector.emit(ViewState.Success(mockDeatailInfo))
                     flowCollector.emit(ViewState.Loading(false))
@@ -91,7 +91,7 @@ class DetailViewModelTest {
 
     @Test
     fun `get detail of house from API with Failure Case`() {
-        runBlockingTest {
+        runTest {
             coEvery { useCase("slug") } returns fakeFailureFlow
             launch {
                 detailViewModel.getDetail().collect(flowCollector)
@@ -99,7 +99,7 @@ class DetailViewModelTest {
             detailViewModel.getDetail()
 
             verifyOrder {
-                runBlockingTest {
+                runTest {
                     flowCollector.emit(ViewState.Loading(true))
                     flowCollector.emit(ViewState.Success(mockDeatailInfo))
                     flowCollector.emit(ViewState.Loading(false))

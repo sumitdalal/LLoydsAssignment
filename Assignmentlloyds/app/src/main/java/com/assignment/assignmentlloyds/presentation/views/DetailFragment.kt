@@ -52,7 +52,7 @@ class DetailFragment : Fragment() {
 
     private fun registerFlow() {
         lifecycleScope.launch {
-            detailViewModel.getDetail().collect { viewState ->
+            detailViewModel.getDetail.collect { viewState ->
                 when (viewState) {
                     is ViewState.Failure -> handleErrorState(viewState.throwable)
                     is ViewState.Loading -> handleLoadingState()
@@ -63,10 +63,12 @@ class DetailFragment : Fragment() {
     }
 
     private fun handleSuccessState(result: DetailInfo) {
+        with(_binding){
+            this?.tvHouse?.text = result.houseName
+            this?.tvSlug?.text = result.slug
+            this?.progressBar?.visibility = View.GONE
+        }
 
-        _binding?.tvHouse?.text = result.houseName
-        _binding?.tvSlug?.text = result.slug
-        _binding?.progressBar?.visibility = View.GONE
     }
 
     private fun handleLoadingState() {

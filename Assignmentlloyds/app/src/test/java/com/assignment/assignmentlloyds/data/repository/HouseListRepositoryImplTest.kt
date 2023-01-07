@@ -1,20 +1,20 @@
 package com.assignment.assignmentlloyds.data.repository
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.assignment.assignmentlloyds.data.mapper.Mapper
+import com.assignment.assignmentlloyds.domain.mapper.ListMapper
 import com.assignment.assignmentlloyds.data.network.IApiService
 import com.assignment.assignmentlloyds.data.response.HouseListResponse
-import com.assignment.assignmentlloyds.domain.model.BaseModelInfo
+import com.assignment.assignmentlloyds.domain.mapper.DetailMapper
+import com.assignment.assignmentlloyds.domain.repository.IRepository
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
-import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import junit.framework.TestCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
@@ -27,14 +27,14 @@ class HouseListRepositoryImplTest {
 
     @get:Rule
     var rule: TestRule = InstantTaskExecutorRule()
-    val dispatcher = TestCoroutineDispatcher()
 
-    private lateinit var houseListRepositoryImpl: HouseListRepositoryImpl
+    private lateinit var iRepository:  RepositoryImpl
 
 
     private  var dataService: IApiService = mockk()
 
-    private  var mapper: Mapper = mockk()
+    private  var listMapper: ListMapper = mockk()
+    private  var detailMapper: DetailMapper = mockk()
 
 
 
@@ -42,32 +42,32 @@ class HouseListRepositoryImplTest {
     fun setUp() {
         MockKAnnotations.init(this)
         Dispatchers.setMain(Dispatchers.IO)
-        houseListRepositoryImpl = HouseListRepositoryImpl(dataService, mapper)
+        iRepository = RepositoryImpl(dataService, listMapper,detailMapper)
     }
 
     @Test
     fun testAPIHouseListSuccess() {
-        runBlockingTest {
+        runTest {
             val response = mockk<Response<List<HouseListResponse>>>()
             coEvery { response.isSuccessful } returns true
             val houseListResponse = mockk<List<HouseListResponse>>()
             coEvery { response.body() } returns houseListResponse
-            coEvery { mapper.map(houseListResponse) } returns listOf(
+            coEvery { listMapper.map(houseListResponse) } returns listOf(
                 mockk()
             )
             coEvery { dataService.getHouseList() } returns response.body()!!
-            TestCase.assertEquals(1, houseListRepositoryImpl().first())
+            TestCase.assertEquals(1, iRepository.getHouseList().first())
         }
     }
 
     @Test
     fun testAPIHouseListFail() {
-        runBlockingTest {
+        runTest {
             val response = mockk<Response<List<HouseListResponse>>>()
             coEvery { response.isSuccessful } returns false
             coEvery { response.message() } returns "error"
             coEvery { dataService.getHouseList() } returns response.body()!!
-            TestCase.assertEquals("error", houseListRepositoryImpl().first())
+            TestCase.assertEquals("error", iRepository.getHouseList().first())
         }
     }
 

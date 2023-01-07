@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
@@ -68,7 +68,7 @@ class HouseListListViewModelTest {
 
     @Test
     fun `get house name list from API Success Case`() {
-        runBlockingTest {
+        runTest {
             coEvery { useCase() } returns fakeSuccessFlow
             launch {
                 houseListViewModel.getHouses().collect(flowCollector)
@@ -76,7 +76,7 @@ class HouseListListViewModelTest {
             houseListViewModel.fetchHouseNames()
 
             verifyOrder {
-                runBlockingTest {
+                runTest {
                     flowCollector.emit(ViewState.Loading(true))
                     flowCollector.emit(ViewState.Success(mockHouseList))
                     flowCollector.emit(ViewState.Loading(false))
@@ -88,7 +88,7 @@ class HouseListListViewModelTest {
 
     @Test
     fun `get house name list from API Failure Case`() {
-        runBlockingTest {
+        runTest {
             coEvery { useCase() } returns fakeFailureFlow
             launch {
                 houseListViewModel.getHouses().collect(flowCollector)
@@ -96,7 +96,7 @@ class HouseListListViewModelTest {
             houseListViewModel.fetchHouseNames()
 
             verifyOrder {
-                runBlockingTest {
+                runTest {
                     flowCollector.emit(ViewState.Loading(true))
                     flowCollector.emit(ViewState.Success(mockHouseList))
                     flowCollector.emit(ViewState.Loading(false))

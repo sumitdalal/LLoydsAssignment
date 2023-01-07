@@ -19,8 +19,8 @@ class HouseListViewModel @Inject constructor(
     private val _houseListFlow: MutableStateFlow<ViewState<List<HouseListInfo>>> by lazy {
         MutableStateFlow(ViewState.Loading(true))
     }
-
-    fun getHouses(): StateFlow<ViewState<List<HouseListInfo>>> = _houseListFlow
+    val getHouses: StateFlow<ViewState<List<HouseListInfo>>> = _houseListFlow
+//    fun getHouses(): StateFlow<ViewState<List<HouseListInfo>>> = _houseListFlow
 
 
     fun fetchHouseNames() {
